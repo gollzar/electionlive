@@ -1,4 +1,4 @@
-name: Deploy to cPanel
+name: Deploy Frontend to cPanel
 
 on:
   push:
@@ -19,16 +19,21 @@ jobs:
           script: |
             set -e
 
+            # Go to app folder
             mkdir -p ~/apps/electionlive
             cd ~/apps/electionlive
 
+            # Pull repo
             if [ ! -d ".git" ]; then
               git clone https://github.com/${{ github.repository }} .
             else
               git pull
             fi
 
+            # Build React frontend
+            cd frontend
             npm install
             npm run build
 
+            # Deploy built files
             rsync -a --delete dist/ ~/public_html/
